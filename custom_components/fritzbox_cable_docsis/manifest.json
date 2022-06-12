@@ -1,0 +1,11 @@
+{
+  "codeowners": ["@dasweasel99"],
+  "config_flow": false,
+  "dependencies": [],
+  "documentation": "https://github.com/weaseel/fritzbox_cable_docsis/",
+  "domain": "fritzbox_cable_docsis",
+  "iot_class": "calculated",
+  "name": "Fritzbox Cable DOCSIS",
+  "requirements": [],
+  "version": "0.0.1"
+}
