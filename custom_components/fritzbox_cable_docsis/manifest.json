@@ -1,5 +1,5 @@
 {
-  "codeowners": ["@dasweasel99"],
+  "codeowners": ["@weaseel"],
   "config_flow": false,
   "dependencies": [],
   "documentation": "https://github.com/weaseel/fritzbox_cable_docsis/",
