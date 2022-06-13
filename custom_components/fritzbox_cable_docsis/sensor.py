@@ -44,7 +44,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_IP_ADDRESS): cv.string,
         vol.Required(CONF_USERNAME): cv.string,
-        vol.Optional(CONF_PASSWORD): cv.string,
+        vol.Required(CONF_PASSWORD): cv.string,
     }
 )
 
@@ -56,7 +56,7 @@ async def async_setup_platform(
     discovery_info: Optional[DiscoveryInfoType] = None,
 ) -> None:
     """Set up the sensor platform."""
-    fritzbox_docsys = FritzBoxDocsis(config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD])
+    fritzbox_docsys = [FritzBoxDocsis(config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD])]
     async_add_entities(fritzbox_docsys, update_before_add=True)
 
 
