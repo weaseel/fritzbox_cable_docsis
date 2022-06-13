@@ -61,8 +61,9 @@ async def async_setup_platform(
 
     data_values = [0, 0]
 
-    fritzbox_docsys = [FritzBoxDocsis(hass, config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD], 0),
-                       FritzBoxDocsis(hass, "192.168.99.2", config[CONF_USERNAME], config[CONF_PASSWORD], 1)]
+
+    fritzbox_docsys = [FritzBoxDocsis(config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD], 0),
+                       FritzBoxDocsis("192.168.99.2", config[CONF_USERNAME], config[CONF_PASSWORD], 1)]
     async_add_entities(fritzbox_docsys, update_before_add=True)
 
 
@@ -84,8 +85,7 @@ class FritzBoxDocsis(Entity):
     device_class = DEVICE_CLASS_SIGNAL_STRENGTH
     _attr_unit_of_measurement = SIGNAL_STRENGTH_DECIBELS
 
-    def __init__(self, hass, ip: str, username: str, password: str, index: int):
-        self._hass = hass
+    def __init__(self, ip: str, username: str, password: str, index: int):
         self._ip_address = ip
         self._username = username
         self._password = password
@@ -124,10 +124,12 @@ class FritzBoxDocsis(Entity):
         }
 
     async def async_update(self):
-        signal_power = data_values[self._increment]
-        _LOGGER.warning("Setting " + str(self._increment) + " to ")
-        self._signal_power = signal_power
-        if self._signal_power > 1000:
-            self._signal_power = 0
+        _LOGGER.warning("signal_power length: " + str(len(data_values)))
+        if len(data_values) >= self._increment:
+            signal_power = data_values[self._increment]
+            _LOGGER.warning("Setting " + str(self._increment) + " to ")
+            self._signal_power = signal_power
+            if self._signal_power > 1000:
+                self._signal_power = 0
 
 
