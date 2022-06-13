@@ -61,7 +61,6 @@ async def async_setup_platform(
 
     data_values = [0, 0]
 
-
     fritzbox_docsys = [FritzBoxDocsis(config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD], 0),
                        FritzBoxDocsis("192.168.99.2", config[CONF_USERNAME], config[CONF_PASSWORD], 1)]
     async_add_entities(fritzbox_docsys, update_before_add=True)
@@ -74,6 +73,8 @@ def async_update_device_state():
         n += 1
         data_value = data_value + n
         _LOGGER.warning("   Value " + str(data_value))
+
+    _LOGGER.warning("Length: " + str(len(data_values)))
 
     for device in fritzbox_docsys:
         device.async_schedule_update_ha_state(True)
