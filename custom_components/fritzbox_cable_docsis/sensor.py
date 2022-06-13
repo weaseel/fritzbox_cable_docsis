@@ -6,7 +6,7 @@ from homeassistant.components.sensor import (
     SensorEntity,
     SensorStateClass,
 )
-from homeassistant.const import TEMP_CELSIUS
+from homeassistant.const import SIGNAL_STRENGTH_DECIBELS_MILLIWATT
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
@@ -25,9 +25,9 @@ def setup_platform(
 class ExampleSensor(SensorEntity):
     """Representation of a Sensor."""
 
-    _attr_name = "Example Temperature"
-    _attr_native_unit_of_measurement = TEMP_CELSIUS
-    _attr_device_class = SensorDeviceClass.TEMPERATURE
+    _attr_name = "FritzPowerLevelTest"
+    _attr_native_unit_of_measurement = SIGNAL_STRENGTH_DECIBELS_MILLIWATT
+    _attr_device_class = SensorDeviceClass.SIGNAL_STRENGTH
     _attr_state_class = SensorStateClass.MEASUREMENT
 
     def update(self) -> None:
