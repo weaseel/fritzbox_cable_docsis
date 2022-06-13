@@ -46,6 +46,7 @@ async def async_setup_platform(
 ) -> None:
     """Set up the sensor platform."""
     _LOGGER.info("FritzBoxDocsis init start")
+    _LOGGER.error("Test error")
     fritzbox_docsys = [FritzBoxDocsis(config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD])]
     async_add_entities(fritzbox_docsys, update_before_add=True)
 
