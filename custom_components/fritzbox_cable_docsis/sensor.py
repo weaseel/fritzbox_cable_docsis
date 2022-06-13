@@ -63,9 +63,11 @@ async def async_setup_platform(
 
 
 def async_update_device_state():
+    _LOGGER.warning("Updating Device State")
     n = float(0)
     for value in fritzbox_docsys:
         n += 1
+        _LOGGER.warning("   Device " + str(n))
         value.set_signal_power(value.state() + n)
 
 
