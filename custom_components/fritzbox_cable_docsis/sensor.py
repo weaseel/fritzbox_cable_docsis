@@ -30,6 +30,9 @@ from homeassistant.helpers.typing import (
     HomeAssistantType,
 )
 
+from .const import DOMAIN
+
+fritzbox_docsys = []
 
 _LOGGER = logging.getLogger(__name__)
 # Time between updating data from GitHub
@@ -52,9 +55,18 @@ async def async_setup_platform(
     discovery_info: None,
 ) -> None:
     """Set up the sensor platform."""
+    global fritzbox_docsys
+
     fritzbox_docsys = [FritzBoxDocsis(config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD], 1),
                        FritzBoxDocsis("192.168.99.2", config[CONF_USERNAME], config[CONF_PASSWORD], 2)]
     async_add_entities(fritzbox_docsys, update_before_add=True)
+
+
+def async_update_device_state():
+    n = float(0)
+    for value in fritzbox_docsys:
+        n += 1
+        value.set_signal_power(value.state() + n)
 
 
 class FritzBoxDocsis(Entity):
@@ -101,11 +113,9 @@ class FritzBoxDocsis(Entity):
             'signal_power': self._signal_power,
         }
 
-    async def async_update(self):
-        """Fetch new state data for the sensor.
-        This is the only method that should fetch new data for Home Assistant.
-        """
-        self._signal_power += self._increment
+    def set_signal_power(self, signal_power):
+        self._signal_power = signal_power
         if self._signal_power > 1000:
             self._signal_power = 0
+
 
