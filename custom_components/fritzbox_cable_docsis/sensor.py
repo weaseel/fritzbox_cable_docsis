@@ -8,6 +8,13 @@ from urllib import parse
 import voluptuous as vol
 from aiohttp import ClientError
 
+from homeassistant.const import (
+    ATTR_VOLTAGE,
+    DEVICE_CLASS_SIGNAL_STRENGTH,
+    DEVICE_CLASS_ILLUMINANCE,
+    SIGNAL_STRENGTH_DECIBELS,
+)
+
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
     CONF_IP_ADDRESS,
@@ -53,6 +60,9 @@ async def async_setup_platform(
 class FritzBoxDocsis(Entity):
     """Representation of a Sensor."""
 
+    device_class = DEVICE_CLASS_SIGNAL_STRENGTH
+    _attr_unit_of_measurement = SIGNAL_STRENGTH_DECIBELS
+
     def __init__(self, ip: str, username: str, password: str):
         self._ip_address = ip
         self._username = username
@@ -67,7 +77,7 @@ class FritzBoxDocsis(Entity):
         return str(self._ip_address)
 
     @property
-    def signal_power(self) -> float:
+    def state(self) -> float:
         """Return the unique ID of the sensor."""
         return self._signal_power
 
@@ -80,6 +90,16 @@ class FritzBoxDocsis(Entity):
     def available(self):
         """Return True if device is available."""
         return True
+
+    @property
+    def device_info(self):
+        """Return a device description for device registry."""
+
+        return {
+            'ip_adress': self._ip_address,
+            'username': self._username,
+            'signal_power': self._signal_power,
+        }
 
     async def async_update(self):
         """Fetch new state data for the sensor.
