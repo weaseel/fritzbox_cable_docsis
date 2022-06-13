@@ -33,6 +33,7 @@ from homeassistant.helpers.typing import (
 from .const import DOMAIN
 
 fritzbox_docsys = []
+data_values = []
 
 _LOGGER = logging.getLogger(__name__)
 # Time between updating data from GitHub
@@ -56,19 +57,23 @@ async def async_setup_platform(
 ) -> None:
     """Set up the sensor platform."""
     global fritzbox_docsys
+    global data_values
 
-    fritzbox_docsys = [FritzBoxDocsis(config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD], 1),
-                       FritzBoxDocsis("192.168.99.2", config[CONF_USERNAME], config[CONF_PASSWORD], 2)]
+    fritzbox_docsys = [FritzBoxDocsis(hass, config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD], 0),
+                       FritzBoxDocsis(hass, "192.168.99.2", config[CONF_USERNAME], config[CONF_PASSWORD], 1)]
     async_add_entities(fritzbox_docsys, update_before_add=True)
 
 
 def async_update_device_state():
     _LOGGER.warning("Updating Device State")
     n = float(0)
-    for value in fritzbox_docsys:
+    for data_value in data_values:
         n += 1
-        _LOGGER.warning("   Device " + str(n))
-        value.set_signal_power(value.state() + n)
+        data_value = data_value + n
+        _LOGGER.warning("   Value " + str(data_value))
+
+    for device in fritzbox_docsys:
+        device.async_schedule_update_ha_state(True)
 
 
 class FritzBoxDocsis(Entity):
@@ -77,12 +82,13 @@ class FritzBoxDocsis(Entity):
     device_class = DEVICE_CLASS_SIGNAL_STRENGTH
     _attr_unit_of_measurement = SIGNAL_STRENGTH_DECIBELS
 
-    def __init__(self, ip: str, username: str, password: str, increment: float):
+    def __init__(self, hass, ip: str, username: str, password: str, index: int):
+        self._hass = hass
         self._ip_address = ip
         self._username = username
         self._password = password
-        self._increment = increment
-        self._name = "FritzBoxDocsisInfo_" + str(increment)
+        self._increment = index
+        self._name = "FritzBoxDocsisInfo_" + str(index)
         self._signal_power = float(0)
 
     @property
@@ -115,8 +121,9 @@ class FritzBoxDocsis(Entity):
             'signal_power': self._signal_power,
         }
 
-    def set_signal_power(self, signal_power):
-        _LOGGER.warning("Setting " + str(self._increment) + " to " + str(signal_power))
+    async def async_update(self):
+        signal_power = data_values[self._increment]
+        _LOGGER.warning("Setting " + str(self._increment) + " to ")
         self._signal_power = signal_power
         if self._signal_power > 1000:
             self._signal_power = 0
