@@ -5,11 +5,7 @@ import re
 from datetime import timedelta
 from typing import Any, Callable, Dict, Optional
 
-from homeassistant.components.sensor import (
-    SensorDeviceClass,
-    SensorEntity,
-    SensorStateClass,
-)
+
 from homeassistant.const import SIGNAL_STRENGTH_DECIBELS_MILLIWATT
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -68,6 +64,7 @@ class FritzBoxDocsis(Entity):
         self._username = username
         self._password = password
         self._signal_power = float(0)
+        _LOGGER.info("FritzBoxDocsis init done")
 
     @property
     def unique_id(self) -> str:
@@ -84,4 +81,5 @@ class FritzBoxDocsis(Entity):
         This is the only method that should fetch new data for Home Assistant.
         """
         self._signal_power += 1
+        _LOGGER.info("Current Signal Power: " + str(self._signal_power))
 
