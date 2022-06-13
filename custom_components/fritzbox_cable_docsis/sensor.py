@@ -1,17 +1,12 @@
-"""Platform for sensor integration."""
-from __future__ import annotations
+"""GitHub sensor platform."""
 import logging
 import re
 from datetime import timedelta
 from typing import Any, Callable, Dict, Optional
+from urllib import parse
 
-
-from homeassistant.const import SIGNAL_STRENGTH_DECIBELS_MILLIWATT
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 import voluptuous as vol
-
+from aiohttp import ClientError
 
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
@@ -19,8 +14,6 @@ from homeassistant.const import (
     CONF_USERNAME,
     CONF_PASSWORD,
 )
-
-
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
@@ -49,9 +42,10 @@ async def async_setup_platform(
     hass: HomeAssistantType,
     config: ConfigType,
     async_add_entities: Callable,
-    discovery_info: Optional[DiscoveryInfoType] = None,
+    discovery_info: None,
 ) -> None:
     """Set up the sensor platform."""
+    _LOGGER.info("FritzBoxDocsis init start")
     fritzbox_docsys = [FritzBoxDocsis(config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD])]
     async_add_entities(fritzbox_docsys, update_before_add=True)
 
@@ -69,7 +63,7 @@ class FritzBoxDocsis(Entity):
     @property
     def unique_id(self) -> str:
         """Return the unique ID of the sensor."""
-        return self._ip_address
+        return str(self._ip_address)
 
     @property
     def signal_power(self) -> float:
