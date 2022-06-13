@@ -4,7 +4,7 @@
   "dependencies": [],
   "documentation": "https://github.com/weaseel/fritzbox_cable_docsis/",
   "domain": "fritzbox_cable_docsis",
-  "iot_class": "calculated",
+  "iot_class": "local_polling",
   "name": "Fritzbox Cable DOCSIS",
   "requirements": [],
   "version": "0.0.1"
