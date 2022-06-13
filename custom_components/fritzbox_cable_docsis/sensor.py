@@ -45,8 +45,7 @@ async def async_setup_platform(
     discovery_info: None,
 ) -> None:
     """Set up the sensor platform."""
-    _LOGGER.info("FritzBoxDocsis init start")
-    _LOGGER.error("Test error")
+    _LOGGER.warning("FritzBoxDocsis init start")
     fritzbox_docsys = [FritzBoxDocsis(config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD])]
     async_add_entities(fritzbox_docsys, update_before_add=True)
 
@@ -59,7 +58,7 @@ class FritzBoxDocsis(Entity):
         self._username = username
         self._password = password
         self._signal_power = float(0)
-        _LOGGER.info("FritzBoxDocsis init done")
+        _LOGGER.warning("FritzBoxDocsis init done")
 
     @property
     def unique_id(self) -> str:
@@ -76,5 +75,5 @@ class FritzBoxDocsis(Entity):
         This is the only method that should fetch new data for Home Assistant.
         """
         self._signal_power += 1
-        _LOGGER.info("Current Signal Power: " + str(self._signal_power))
+        _LOGGER.warning("Current Signal Power: " + str(self._signal_power))
 
