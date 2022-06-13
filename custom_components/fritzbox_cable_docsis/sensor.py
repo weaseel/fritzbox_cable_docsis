@@ -114,6 +114,7 @@ class FritzBoxDocsis(Entity):
         }
 
     def set_signal_power(self, signal_power):
+        _LOGGER.warning("Setting " + str(self._increment) + " to " + str(signal_power))
         self._signal_power = signal_power
         if self._signal_power > 1000:
             self._signal_power = 0
