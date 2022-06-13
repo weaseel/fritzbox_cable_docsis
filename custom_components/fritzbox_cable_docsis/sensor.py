@@ -59,6 +59,8 @@ async def async_setup_platform(
     global fritzbox_docsys
     global data_values
 
+    data_values = [0, 0]
+
     fritzbox_docsys = [FritzBoxDocsis(hass, config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD], 0),
                        FritzBoxDocsis(hass, "192.168.99.2", config[CONF_USERNAME], config[CONF_PASSWORD], 1)]
     async_add_entities(fritzbox_docsys, update_before_add=True)
