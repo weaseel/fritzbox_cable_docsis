@@ -57,6 +57,7 @@ class FritzBoxDocsis(Entity):
         self._ip_address = ip
         self._username = username
         self._password = password
+        self._name = "FritzBoxDocsisInfo"
         self._signal_power = float(0)
         _LOGGER.warning("FritzBoxDocsis init done")
 
@@ -69,6 +70,16 @@ class FritzBoxDocsis(Entity):
     def signal_power(self) -> float:
         """Return the unique ID of the sensor."""
         return self._signal_power
+
+    @property
+    def name(self) -> str:
+        """Return the unique ID of the sensor."""
+        return self._name
+
+    @property
+    def available(self):
+        """Return True if device is available."""
+        return True
 
     async def async_update(self):
         """Fetch new state data for the sensor.
