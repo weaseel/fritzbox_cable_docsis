@@ -53,7 +53,8 @@ async def async_setup_platform(
 ) -> None:
     """Set up the sensor platform."""
     _LOGGER.warning("FritzBoxDocsis init start")
-    fritzbox_docsys = [FritzBoxDocsis(config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD])]
+    fritzbox_docsys = [FritzBoxDocsis(config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD], 1),
+                       FritzBoxDocsis("192.168.99.2", config[CONF_USERNAME], config[CONF_PASSWORD], 2)]
     async_add_entities(fritzbox_docsys, update_before_add=True)
 
 
@@ -63,10 +64,11 @@ class FritzBoxDocsis(Entity):
     device_class = DEVICE_CLASS_SIGNAL_STRENGTH
     _attr_unit_of_measurement = SIGNAL_STRENGTH_DECIBELS
 
-    def __init__(self, ip: str, username: str, password: str):
+    def __init__(self, ip: str, username: str, password: str, increment: float):
         self._ip_address = ip
         self._username = username
         self._password = password
+        self._increment = increment
         self._name = "FritzBoxDocsisInfo"
         self._signal_power = float(0)
         _LOGGER.warning("FritzBoxDocsis init done")
@@ -105,6 +107,6 @@ class FritzBoxDocsis(Entity):
         """Fetch new state data for the sensor.
         This is the only method that should fetch new data for Home Assistant.
         """
-        self._signal_power += 1
+        self._signal_power += self._increment
         _LOGGER.warning("Current Signal Power: " + str(self._signal_power))
 
