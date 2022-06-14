@@ -93,14 +93,13 @@ class FritzBoxDocsis(Entity):
 
     def __init__(self, name: str, index: int):
         self._increment = index
-        self._name = "FritzBoxDocsisInfo_" + str(index)
-        self._name_output = "FritzBoxDocsisInfo_" + str(index)
+        self._name = "FritzBoxDocsisInfo_" + str(name)
         self._signal_power = float(0)
 
     @property
     def unique_id(self) -> str:
         """Return the unique ID of the sensor."""
-        return str(self.name)
+        return str(self._name)
 
     @property
     def state(self) -> float:
@@ -110,7 +109,7 @@ class FritzBoxDocsis(Entity):
     @property
     def name(self) -> str:
         """Return the unique ID of the sensor."""
-        return self._name_output
+        return self._name
 
     @property
     def available(self):
@@ -122,7 +121,7 @@ class FritzBoxDocsis(Entity):
         """Return a device description for device registry."""
 
         return {
-            'name': self._name_output,
+            'name': self._name,
             'signal_power': self._signal_power,
         }
 
@@ -130,7 +129,7 @@ class FritzBoxDocsis(Entity):
         _LOGGER.warning("signal_power length: " + str(len(data_values)) + " index: " + str(self._increment))
         if len(data_values) >= self._increment:
             signal_power = data_values[self._increment]
-            _LOGGER.warning("Setting " + str(self._increment) + " to ")
+            _LOGGER.warning("Setting " + str(self._increment) + " to " + str(signal_power))
             self._signal_power = signal_power
             if self._signal_power > 1000:
                 self._signal_power = 0
