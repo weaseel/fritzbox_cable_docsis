@@ -8,6 +8,8 @@ from urllib import parse
 import voluptuous as vol
 from aiohttp import ClientError
 
+from homeassistant.core import HomeAssistant, State, callback
+
 from homeassistant.const import (
     DEVICE_CLASS_SIGNAL_STRENGTH,
     SIGNAL_STRENGTH_DECIBELS,
