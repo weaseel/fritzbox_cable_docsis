@@ -70,6 +70,7 @@ async def async_setup_platform(
 
 
 def async_update_device_state():
+    global data_values
     _LOGGER.warning("Updating Device State")
     n = float(0)
     index = 0
@@ -126,6 +127,7 @@ class FritzBoxDocsis(Entity):
         }
 
     async def async_update(self):
+        global data_values
         _LOGGER.warning("signal_power length: " + str(len(data_values)) + " index: " + str(self._increment))
         if len(data_values) >= self._increment:
             signal_power = data_values[self._increment]
