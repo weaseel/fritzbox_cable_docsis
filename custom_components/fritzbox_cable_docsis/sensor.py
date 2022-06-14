@@ -34,6 +34,7 @@ from .const import DOMAIN
 
 fritzbox_docsys = []
 data_values = []
+signals = ["signal 1", "signal 2", "signal 3"]
 
 _LOGGER = logging.getLogger(__name__)
 # Time between updating data from GitHub
@@ -59,20 +60,24 @@ async def async_setup_platform(
     global fritzbox_docsys
     global data_values
 
-    data_values = [0, 0]
+    n = 0
+    for signal in signals:
+        data_values.append(0)
+        fritzbox_docsys.append(FritzBoxDocsis(signal, n))
+        n += 1
 
-    fritzbox_docsys = [FritzBoxDocsis(config[CONF_IP_ADDRESS], config[CONF_USERNAME], config[CONF_PASSWORD], 0),
-                       FritzBoxDocsis("192.168.99.2", config[CONF_USERNAME], config[CONF_PASSWORD], 1)]
     async_add_entities(fritzbox_docsys, update_before_add=True)
 
 
 def async_update_device_state():
     _LOGGER.warning("Updating Device State")
     n = float(0)
-    for data_value in data_values:
+    index = 0
+    for signal in signals:
         n += 1
-        data_value = data_value + n
-        _LOGGER.warning("   Value " + str(data_value))
+        data_values[index] = data_values[index] + n
+        _LOGGER.warning("   Value " + str(data_values[index]))
+        index += 1
 
     _LOGGER.warning("Length: " + str(len(data_values)))
 
@@ -86,18 +91,16 @@ class FritzBoxDocsis(Entity):
     device_class = DEVICE_CLASS_SIGNAL_STRENGTH
     _attr_unit_of_measurement = SIGNAL_STRENGTH_DECIBELS
 
-    def __init__(self, ip: str, username: str, password: str, index: int):
-        self._ip_address = ip
-        self._username = username
-        self._password = password
+    def __init__(self, name: str, index: int):
         self._increment = index
         self._name = "FritzBoxDocsisInfo_" + str(index)
+        self._name_output = "FritzBoxDocsisInfo_" + str(index)
         self._signal_power = float(0)
 
     @property
     def unique_id(self) -> str:
         """Return the unique ID of the sensor."""
-        return str(self._ip_address)
+        return str(self.name)
 
     @property
     def state(self) -> float:
@@ -107,7 +110,7 @@ class FritzBoxDocsis(Entity):
     @property
     def name(self) -> str:
         """Return the unique ID of the sensor."""
-        return self._name
+        return self._name_output
 
     @property
     def available(self):
@@ -119,13 +122,12 @@ class FritzBoxDocsis(Entity):
         """Return a device description for device registry."""
 
         return {
-            'ip_adress': self._ip_address,
-            'username': self._username,
+            'name': self._name_output,
             'signal_power': self._signal_power,
         }
 
     async def async_update(self):
-        _LOGGER.warning("signal_power length: " + str(len(data_values)))
+        _LOGGER.warning("signal_power length: " + str(len(data_values)) + " index: " + str(self._increment))
         if len(data_values) >= self._increment:
             signal_power = data_values[self._increment]
             _LOGGER.warning("Setting " + str(self._increment) + " to ")
