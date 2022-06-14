@@ -33,7 +33,6 @@ from homeassistant.helpers.typing import (
 from .const import DOMAIN
 
 fritzbox_docsys = []
-data_values = []
 signals = ["signal 1", "signal 2", "signal 3"]
 
 _LOGGER = logging.getLogger(__name__)
@@ -58,29 +57,22 @@ async def async_setup_platform(
 ) -> None:
     """Set up the sensor platform."""
     global fritzbox_docsys
-    global data_values
 
     n = 0
     for signal in signals:
-        data_values.append(0)
         fritzbox_docsys.append(FritzBoxDocsis(signal, n))
         n += 1
 
     async_add_entities(fritzbox_docsys, update_before_add=True)
 
 
-def async_update_device_state():
-    global data_values
+async def async_update_device_state():
     _LOGGER.warning("Updating Device State")
     n = float(0)
     index = 0
-    for signal in signals:
+    for device in fritzbox_docsys:
         n += 1
-        data_values[index] = data_values[index] + n
-        _LOGGER.warning("   Value " + str(data_values[index]))
-        index += 1
-
-    _LOGGER.warning("Length: " + str(len(data_values)))
+        device.set_signal_power(device.state() + n)
 
     for device in fritzbox_docsys:
         device.async_schedule_update_ha_state(True)
@@ -126,14 +118,12 @@ class FritzBoxDocsis(Entity):
             'signal_power': self._signal_power,
         }
 
+    def set_signal_power(self, signal_power):
+        _LOGGER.warning("set_signal_power: " + str(self._increment) + " to " + str(signal_power))
+        self._signal_power = signal_power
+
     async def async_update(self):
-        global data_values
-        _LOGGER.warning("signal_power length: " + str(len(data_values)) + " index: " + str(self._increment))
-        if len(data_values) >= self._increment:
-            signal_power = data_values[self._increment]
-            _LOGGER.warning("Setting " + str(self._increment) + " to " + str(signal_power))
-            self._signal_power = signal_power
-            if self._signal_power > 1000:
-                self._signal_power = 0
+        _LOGGER.warning("async_update: " + self._name + " index: " + str(self._signal_power))
+
 
 
